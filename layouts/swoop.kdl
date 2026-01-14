@@ -1,0 +1,77 @@
+layout {
+    cwd "/Users/bgladwell/dev/spx"
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="tab-bar"
+        }
+        children
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    tab name="astrology" cwd="astrology" {
+        pane split_direction="vertical" focus=true {
+            pane command="nvim" {
+                start_suspended true
+            }
+            pane stacked=true {
+                pane expanded=true
+                pane name="Tilt" {
+                  command "/opt/homebrew/bin/tilt"
+                  args "up"
+                  start_suspended true
+                }
+            }
+        }
+    }
+    tab name="workspace" cwd="rcis-workspace" {
+        pane split_direction="vertical" focus=true {
+            pane command="nvim" {
+                start_suspended true
+            }
+            pane stacked=true {
+                pane expanded=true
+                pane name="Tilt" {
+                  command "/opt/homebrew/bin/tilt"
+                  args "up" "--" "--source-astrology" "--web-debug-port=38698" "--jobs-debug-port=38699"
+                  start_suspended true
+                }
+            }
+        }
+    }
+    tab name="sage" cwd="sage" {
+        pane split_direction="vertical" focus=true {
+            pane command="nvim" {
+                start_suspended true
+            }
+            pane stacked=true {
+                pane expanded=true
+                pane name="Tilt" {
+                  command "/opt/homebrew/bin/tilt"
+                  args "up" "--" "--web-debug-port=38698" "--jobs-debug-port=38699"
+                  start_suspended true
+                }
+            }
+        }
+    }
+    tab name="workspace-ops" cwd="workspace-ops" {
+        pane split_direction="vertical" focus=true {
+            pane command="nvim" {
+                start_suspended true
+            }
+            pane stacked=true {
+                pane expanded=true
+                pane name="Docker" {
+                  command "docker"
+                  args "compose" "up"
+                  start_suspended true
+                }
+                pane name="Servers" {
+                  command "bash"
+                  args "-c" "PORT=3002 overmind start -f Procfile.dev"
+                  start_suspended true
+                }
+            }
+        }
+    }
+}
