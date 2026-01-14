@@ -1,0 +1,33 @@
+layout {
+    cwd "/Users/bengladwell/workspace/interview-share/"
+    tab name="verbatim" {
+        pane size=1 borderless=true {
+            plugin location="tab-bar"
+        }
+        pane split_direction="vertical" focus=true {
+            pane command="nvim"
+            pane stacked=true {
+                pane expanded=true
+                pane name="Docker" {
+                    command "docker"
+                    args "compose" "up"
+                    start_suspended true
+                }
+                pane name="Puma" {
+                    command "bin/rails"
+                    args "server"
+                    start_suspended true
+                }
+                // TODO: use env var PGGSSENCMODE=disable
+                pane name="Solid Queue" {
+                    command "bundle"
+                    args "exec" "rake" "solid_queue:start"
+                    start_suspended true
+                }
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+}
