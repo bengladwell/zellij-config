@@ -18,10 +18,9 @@ layout {
                     args "server"
                     start_suspended true
                 }
-                // TODO: use env var PGGSSENCMODE=disable
                 pane name="Solid Queue" {
-                    command "bundle"
-                    args "exec" "rake" "solid_queue:start"
+                    command "sh"
+                    args "-c" "PGGSSENCMODE=disable bundle exec rake solid_queue:start"
                     start_suspended true
                 }
             }
