@@ -11,29 +11,40 @@ layout {
     }
     tab name="astrology" cwd="astrology" {
         pane split_direction="vertical" focus=true {
-            pane command="nvim" {
-                start_suspended true
-            }
+            pane command="nvim"
             pane stacked=true {
                 pane expanded=true
-                pane name="Tilt" {
-                  command "/opt/homebrew/bin/tilt"
-                  args "up"
+                pane name="uvicorn" {
+                  command "bash"
+                  args "-c" "REDIS_URL=redis://localhost:6379/2 DATABASE_PORT=5432 doppler run -- uv run start_api"
                   start_suspended true
                 }
+                pane name="dramatiq" {
+                  command "bash"
+                  args "-c" "REDIS_URL=redis://localhost:6379/2 DATABASE_PORT=5432 ASTROLOGY_PIDS_PATH=../rcis-workspace/storage/ doppler run -- uv run start_worker"
+                  start_suspended true
+                }
+                // No docker - we're always running this out of workspace
             }
         }
     }
     tab name="workspace" cwd="rcis-workspace" {
         pane split_direction="vertical" focus=true {
-            pane command="nvim" {
-                start_suspended true
-            }
+            pane command="nvim"
             pane stacked=true {
                 pane expanded=true
-                pane name="Tilt" {
-                  command "/opt/homebrew/bin/tilt"
-                  args "up" "--" "--source-astrology" "--web-debug-port=38698" "--jobs-debug-port=38699"
+                pane name="Servers" {
+                  command "overmind"
+                  args "start" "-f" "Procfile.debug"
+                  start_suspended true
+                }
+                pane name="Log" {
+                  command "tail"
+                  args "-f" "log/development.log"
+                }
+                pane name="Docker" {
+                  command "docker"
+                  args "compose" "up" "postgres" "redis"
                   start_suspended true
                 }
             }
@@ -41,9 +52,7 @@ layout {
     }
     tab name="sage" cwd="sage" {
         pane split_direction="vertical" focus=true {
-            pane command="nvim" {
-                start_suspended true
-            }
+            pane command="nvim"
             pane stacked=true {
                 pane expanded=true
                 pane name="Tilt" {
@@ -56,9 +65,7 @@ layout {
     }
     tab name="workspace-ops" cwd="workspace-ops" {
         pane split_direction="vertical" focus=true {
-            pane command="nvim" {
-                start_suspended true
-            }
+            pane command="nvim"
             pane stacked=true {
                 pane expanded=true
                 pane name="Docker" {
