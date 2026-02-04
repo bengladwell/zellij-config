@@ -1,6 +1,20 @@
 keybinds clear-defaults=true {
+    // normal {
+    //     bind "Enter" {
+    //         // Passthru `Enter`.
+    //         WriteChars "\u{000D}";
+    //         // Invoke autolock to immediately assess proper lock state.
+    //         // (This provides a snappier experience compared to
+    //         // solely relying on `reaction_seconds` to elapse.)
+    //         MessagePlugin "autolock" {};
+    //     }
+    // }
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
+        bind "Alt z" {
+          MessagePlugin "autolock" {payload "disable";};
+          SwitchToMode "Normal";
+        }
     }
     pane {
         bind "left" { MoveFocus "left"; }
@@ -76,7 +90,7 @@ keybinds clear-defaults=true {
         bind "up" { MovePane "up"; }
         bind "right" { MovePane "right"; }
         bind "h" { MovePane "left"; }
-        bind "Ctrl h" { SwitchToMode "normal"; }
+        bind "Alt u" { SwitchToMode "normal"; }
         bind "j" { MovePane "down"; }
         bind "k" { MovePane "up"; }
         bind "l" { MovePane "right"; }
@@ -141,13 +155,18 @@ keybinds clear-defaults=true {
             SwitchToMode "normal"
         }
     }
+    shared {
+        bind "Alt Shift z" {
+            MessagePlugin "autolock" {payload "enable";};
+        }
+    }
     shared_except "locked" {
         bind "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt =" { Resize "Increase"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
-        bind "Alt f" { ToggleFloatingPanes; }
+        bind "Alt t" { ToggleFloatingPanes; }
         bind "Ctrl g" { SwitchToMode "locked"; }
         bind "Alt i" { MoveTab "left"; }
         bind "Alt n" { NewPane; }
@@ -155,9 +174,37 @@ keybinds clear-defaults=true {
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
         bind "Ctrl q" { Quit; }
+
+        // Put keybindings here if they conflict with Vim or others.
+
+        bind "Alt z" {
+            // Disable the autolock plugin.
+            MessagePlugin "autolock" {payload "disable";};
+            // Lock Zellij.
+            SwitchToMode "Locked";
+        }
+
+        bind "Ctrl h" {
+            MoveFocusOrTab "Left";
+        }
+        bind "Ctrl l" {
+            MoveFocusOrTab "Right";
+        }
+        bind "Ctrl j" {
+            MoveFocus "Down";
+        }
+        bind "Ctrl k" {
+            MoveFocus "Up";
+        }
+
+        // bind "Ctrl d" { HalfPageScrollDown; }
+        // bind "Ctrl u" { HalfPageScrollUp; }
+
+        // bind "Ctrl f" { PageScrollDown; }
+        // bind "Ctrl b" { PageScrollUp; }
     }
     shared_except "locked" "move" {
-        bind "Ctrl h" { SwitchToMode "move"; }
+        bind "Alt u" { SwitchToMode "move"; }
     }
     shared_except "locked" "session" {
         bind "Ctrl o" { SwitchToMode "session"; }
@@ -271,12 +318,24 @@ plugins {
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
     }
+    autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
+        // Enabled at start?
+        is_enabled true
+        // Lock when any open these programs open.
+        triggers "nvim|vim|git|fzf|zoxide|atuin"
+        // Reaction to input occurs after this many seconds. (default=0.3)
+        // (An existing scheduled reaction prevents additional reactions.)
+        reaction_seconds "0.3"
+        // Print to Zellij log? (default=false)
+        print_to_log true
+    }
 }
 
 // Plugins to load in the background when a new session starts
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
+  autolock
 }
 web_client {
     font "monospace"
@@ -456,7 +515,7 @@ default_mode "normal"
 // Enable or disable support for the enhanced Kitty Keyboard Protocol (the host terminal must also support it)
 // (Requires restart)
 // Default: true (if the host terminal supports it)
-// 
+//
 // support_kitty_keyboard_protocol false
 // Whether to make sure a local web server is running when a new Zellij session starts.
 // This web server will allow creating new sessions and attaching to existing ones that have
